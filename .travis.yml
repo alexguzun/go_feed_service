@@ -14,9 +14,7 @@ env:
     - REPO=sillenttroll/go_feed_service
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker build --force-rm -t $REPO . ;
-    docker tag $REPO $REPO:$COMMIT;
-    docker push $REPO;
-    fi
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker build --force-rm -t $REPO .
+  - docker tag $REPO $REPO:$COMMIT
+  - docker push $REPO
