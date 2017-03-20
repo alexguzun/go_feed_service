@@ -7,7 +7,6 @@ language: go
 
 go:
   - 1.8.x
-  - master
 
 env:
   global:
@@ -17,7 +16,7 @@ env:
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -e=$DOCKER_EMAIL -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker build --force-rm -t $REPO:$COMMIT . ;
-    docker tag $REPO:$COMMIT $REPO:$COMMIT;
-    docker push $REPO:$COMMIT;
+    docker build --force-rm -t $REPO . ;
+    docker tag $REPO $REPO:$COMMIT;
+    docker push $REPO;
     fi
