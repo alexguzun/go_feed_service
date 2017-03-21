@@ -1,8 +1,10 @@
 # go_feed_service
 A service that reads, at a configured periodicity, RSS or Atom feeds and stores the items into a MongoDB database.
+[![Build Status](https://travis-ci.org/alexguzun/go_feed_service.svg?branch=master)](https://travis-ci.org/alexguzun/go_feed_service)
 
 ##Database Model:
-####Feed Source
+
+######Feed Source
 ```json
 {
     "_id": "",
@@ -13,7 +15,7 @@ A service that reads, at a configured periodicity, RSS or Atom feeds and stores 
     "last_check": ""
 }
 ```
-####Feed entry
+######Feed entry
 ```json
 {
     "_id": "",
