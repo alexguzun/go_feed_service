@@ -22,3 +22,18 @@ func GetMongoSession() *mgo.Session {
 func GetMongoCollection(session *mgo.Session, name string) *mgo.Collection {
 	return session.DB("").C(name)
 }
+
+type QueryDef func(session *mgo.Session) (result interface{}, err error)
+type Command func(session *mgo.Session) (err error)
+
+func Query(session *mgo.Session, query QueryDef) (interface{}, error) {
+	newSession := session.Copy()
+	defer newSession.Close()
+	return query(newSession)
+}
+
+func Execute(session *mgo.Session, command Command) error {
+	newSession := session.Copy()
+	defer newSession.Close()
+	return command(newSession)
+}

@@ -15,13 +15,15 @@ type FeedEntriesMongoRepo struct {
 const FeedEntriesCollection string = "feed_entries"
 
 func (repo *FeedEntriesMongoRepo) IsNewEntry(feedEntryId string) (bool, error) {
-	count, err := getEntriesCollection(repo).
-		Find(bson.M{"_id": feedEntryId}).
-		Count()
+	count, err := db.Query(repo.Session, func(session *mgo.Session) (interface{}, error) {
+		return getEntriesCollection(session).
+			Find(bson.M{"_id": feedEntryId}).
+			Count()
+	})
 
 	if err != nil {
 		return false, err
-	} else if count == 0 {
+	} else if count.(int) == 0 {
 		return true, nil
 	} else {
 		return false, nil
@@ -29,12 +31,15 @@ func (repo *FeedEntriesMongoRepo) IsNewEntry(feedEntryId string) (bool, error) {
 }
 
 func (repo *FeedEntriesMongoRepo) Save(newFeedEntry models.FeedEntry) {
-	err := getEntriesCollection(repo).Insert(newFeedEntry)
+	err := db.Execute(repo.Session, func(session *mgo.Session) (err error) {
+		return getEntriesCollection(session).Insert(newFeedEntry)
+	})
+
 	if err != nil {
 		log.WithField("feed_entry_id", newFeedEntry.ID).WithError(err).Error("Failed to add new feed entry")
 	}
 }
 
-func getEntriesCollection(repo *FeedEntriesMongoRepo) *mgo.Collection {
-	return db.GetMongoCollection(repo.Session, FeedEntriesCollection)
+func getEntriesCollection(session *mgo.Session) *mgo.Collection {
+	return db.GetMongoCollection(session, FeedEntriesCollection)
 }
